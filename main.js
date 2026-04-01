@@ -98,6 +98,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Unified Interaction Logic (Pointer Events for Mobile & Desktop)
+    const handlePointerDown = (e) => {
+        if (isScanning) return;
+        
+        // Lock pointer to stop other touch behaviors
+        if (scanner.setPointerCapture) {
+            scanner.setPointerCapture(e.pointerId);
+        }
+        
+        startScan(e);
+    };
+
+    const handlePointerUp = (e) => {
+        if (!isScanning) return;
+        
+        if (scanner.releasePointerCapture) {
+            scanner.releasePointerCapture(e.pointerId);
+        }
+        
+        stopScan();
+    };
+
+    // Modern Pointer Listeners (Covers Touch & Mouse)
+    scanner.addEventListener('pointerdown', handlePointerDown);
+    scanner.addEventListener('pointerup', handlePointerUp);
+    scanner.addEventListener('pointerleave', handlePointerUp);
+    scanner.addEventListener('pointercancel', handlePointerUp);
+
+    // Disable system-level long-press menu
+    scanner.addEventListener('contextmenu', (e) => e.preventDefault());
+    window.addEventListener('contextmenu', (e) => e.preventDefault());
+
     // Close Video
     closeVideo.addEventListener('click', () => {
         videoOverlay.classList.remove('active');
@@ -107,14 +139,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         resetScan();
     });
-
-    // Touch Support
-    scanner.addEventListener('touchstart', startScan);
-    scanner.addEventListener('touchend', stopScan);
-    scanner.addEventListener('touchcancel', stopScan);
-
-    // Mouse Support
-    scanner.addEventListener('mousedown', startScan);
-    scanner.addEventListener('mouseup', stopScan);
-    scanner.addEventListener('mouseleave', stopScan);
 });

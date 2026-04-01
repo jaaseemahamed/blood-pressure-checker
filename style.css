@@ -152,6 +152,10 @@ body {
   box-shadow: 
     0 20px 50px rgba(0,0,0,0.3),
     inset 0 1px 1px var(--glass-border);
+  /* MOBILE TOUCH FIX */
+  touch-action: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
 }
 
 .scanner-container:active {
