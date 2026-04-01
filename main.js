@@ -20,15 +20,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const startScan = (e) => {
         if (isScanning) return;
-        e.preventDefault();
+        
+        // Prevent mobile context menus and scaling
+        if (e.cancelable) e.preventDefault();
         
         isScanning = true;
         scanner.classList.add('scanning');
         instructionText.innerText = "HOLD STEADY... SCANNING";
         progressData.style.opacity = "1";
+
+        // Real haptic feedback (Vibrate)
+        if (navigator.vibrate) {
+            navigator.vibrate([10, 20, 10]); // Subtle medical-grade pulse
+        }
         
         scanInterval = setInterval(() => {
             progress += 1;
+            
+            // Pulse vibration every 1 second
+            if (progress % 20 === 0 && navigator.vibrate) {
+                navigator.vibrate(30); 
+            }
             
             // UI Feedback
             if (progress < 100) {
